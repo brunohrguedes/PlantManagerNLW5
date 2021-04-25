@@ -37,7 +37,7 @@ export function MyPlants() {
           try {
             await removePlant(plant.id);
             setMyPlants((oldData) => oldData.filter((item) => item.id !== plant.id));
-
+            loadStorageData();
           } catch (error) {
             Alert.alert('Não foi possível remover! 🥺');
           }
@@ -46,26 +46,25 @@ export function MyPlants() {
     ]);
   }
 
-  useEffect(() => {
-    async function loadStorageData() {
-      const plantsStoraged = await loadPlant();
-      
-      if (plantsStoraged[0] == null) {
-        setNextWatered('Não há plantas cadastradas!');
-      }
-      else {
-        const nextTime = formatDistance(
-          new Date(plantsStoraged[0].dateTimeNotification).getTime(),
-          new Date().getTime(),
-          { locale: pt }
-        );
-  
-        setNextWatered(`Não esqueça de regar a ${plantsStoraged[0].name} em ${nextTime}.`);
-      }
-      setMyPlants(plantsStoraged);
-      setLoading(false);
-    }
+  async function loadStorageData() {
+    const plantsStoraged = await loadPlant();
+    
+    if (plantsStoraged[0] == null) {
+      setNextWatered('Não há plantas cadastradas!');
+    } else {
+      const nextTime = formatDistance(
+        new Date(plantsStoraged[0].dateTimeNotification).getTime(),
+        new Date().getTime(),
+        { locale: pt }
+      );
 
+      setNextWatered(`Não esqueça de regar a ${plantsStoraged[0].name} em ${nextTime}.`);
+    }
+    setMyPlants(plantsStoraged);
+    setLoading(false);
+  }
+  
+  useEffect(() => {
     loadStorageData();
   },[]);
 
